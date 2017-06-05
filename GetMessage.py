@@ -56,6 +56,6 @@ def GetMimeMessage(service, user_id, msg_id):
     # print '----------'
     # print mime_msg
 
-    return mime_msg
+    return mime_msg,msg_str
   except errors.HttpError, error:
     print 'An error occurred: %s' % error

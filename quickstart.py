@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import httplib2
 import os
@@ -70,8 +71,34 @@ def main():
 
  
     lists = ListMessagesWithLabels(service,user_id = 'me')
-    mes = GetMimeMessage(service,user_id = 'me',msg_id = lists[3]['id'])
-    print (mes.get_unixfrom())
+    mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[3]['id'])
+    # print (mes)
+
+
+    j = 0
+    for part in mes.walk():  
+        j = j + 1  
+        fileName = part.get_filename()  
+        contentType = part.get_content_type()  
+        mycode=part.get_content_charset();  
+        # 保存附件  
+        if fileName:  
+            print ('hhhhhhhhhhhhh')
+        elif contentType == 'text/plain':# or contentType == 'text/html':  
+            #保存正文  
+            data = part.get_payload(decode=True)  
+            content=str(data);  
+            # if mycode=='gb2312':  
+            #     content= mbs_to_utf8(content)  
+            #end if      
+            # nPos = content.find('降息')  
+            # print("nPos is %d"%(nPos))  
+            # print >> f, data  
+            print (content)
+        #end if  
+
+
+        
     # help(mes)
     # for i in mes.values():
     #     print (i)
