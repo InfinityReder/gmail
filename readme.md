@@ -1,6 +1,1 @@
-message是邮件，不过list接口只会列出邮件id……
-
-threads同样也是邮件，不过因为gmail会合并同一个发件人，所以假如A给B发了两封邮件，在threads上是只有一条记录的……
-不过好处是，接口能返回一个标题信息
-
-——但如果要去做内容统计，基于时间线的话，还是得用到message
+just for myself
