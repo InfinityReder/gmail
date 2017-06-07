@@ -3,6 +3,8 @@ from __future__ import print_function
 import httplib2
 import os
 
+import re
+
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
@@ -10,7 +12,7 @@ from oauth2client.file import Storage
 
 from GetDraft import GetDraft
 from ListDrafts import ListDrafts
-from ListMessages import ListMessagesWithLabels
+from ListMessages import ListMessages
 from GetMessage import GetMimeMessage
 
 
@@ -40,7 +42,7 @@ def get_credentials():
     Returns:
         Credentials, the obtained credential.
     """
-    home_dir = os.path.expanduser('~')
+    home_dir = './ignore' #os.path.expanduser('./')
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
@@ -69,10 +71,11 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
 
- 
-    lists = ListMessagesWithLabels(service,user_id = 'me')
-    mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[3]['id'])
-    # print (mes)
+
+    lists,nextPageToken = ListMessages(service,user_id = 'me',q='subject:tradingview')
+    # print (lists)
+    mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[0]['id'])
+    print (mes)
 
 
     j = 0
@@ -82,9 +85,9 @@ def main():
         contentType = part.get_content_type()  
         mycode=part.get_content_charset();  
         # 保存附件  
-        if fileName:  
+        if fileName:
             print ('hhhhhhhhhhhhh')
-        elif contentType == 'text/plain':# or contentType == 'text/html':  
+        elif contentType == 'text/plain' or contentType == 'text/html':  
             #保存正文  
             data = part.get_payload(decode=True)  
             content=str(data);  
@@ -94,7 +97,10 @@ def main():
             # nPos = content.find('降息')  
             # print("nPos is %d"%(nPos))  
             # print >> f, data  
-            print (content)
+            # 正则替换掉所有非 <a></a>的标签  <[^>|a]+>
+            # reg = re.compile('<[^>|a]+>')
+            contentTxt = re.compile('<[^>|a]+>').sub('',content)
+            print (reg.sub('',content))
         #end if  
 
 

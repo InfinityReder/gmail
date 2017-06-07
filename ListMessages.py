@@ -4,7 +4,7 @@
 from apiclient import errors
 
 
-def ListMessagesMatchingQuery(service, user_id, query=''):
+def ListMessagesMatchingQuery(service, user_id, query='',maxResults = 10):
   """List all Messages of the user's mailbox matching the query.
 
   Args:
@@ -21,6 +21,7 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
   """
   try:
     response = service.users().messages().list(userId=user_id,
+                                               maxResults = maxResults,
                                                q=query).execute()
     messages = []
     if 'messages' in response:
@@ -37,7 +38,7 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
     print 'An error occurred: %s' % error
 
 
-def ListMessagesWithLabels(service, user_id, label_ids=[]):
+def ListMessagesWithLabels(service, user_id, label_ids=[],maxResults = 10):
   """List all Messages of the user's mailbox with label_ids applied.
 
   Args:
@@ -53,7 +54,8 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
   """
   try:
     response = service.users().messages().list(userId=user_id,
-                                               labelIds=label_ids).execute()
+                                               maxResults = maxResults,
+                                               labelIds=label_ids,).execute()
     messages = []
     if 'messages' in response:
       messages.extend(response['messages'])
@@ -67,5 +69,33 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
       messages.extend(response['messages'])
 
     return messages
+  except errors.HttpError, error:
+    print 'An error occurred: %s' % error
+
+
+def ListMessages(service, user_id = 'me', label_ids=[],maxResults = 10,pageToken = '',q = ''):
+  '''
+  Path parameters
+  userId	string	The user's email address. The special value me can be used to indicate the authenticated user.
+  Optional query parameters
+  includeSpamTrash	boolean	Include messages from SPAM and TRASH in the results. (Default: false)
+  labelIds	string	Only return messages with labels that match all of the specified label IDs.
+  maxResults	unsigned integer	Maximum number of messages to return.
+  pageToken	string	Page token to retrieve a specific page of results in the list.
+  q	string	Only return messages matching the specified query. Supports the same query format as the Gmail search box. For example, "from:someuser@example.com rfc822msgid: is:unread". Parameter cannot be used when accessing the api using the gmail.metadata scope.
+  '''
+  try:
+    response = service.users().messages().list(userId=user_id,
+                                               labelIds=label_ids,
+                                               maxResults = maxResults,
+                                               pageToken = pageToken,
+                                               q = q).execute()
+    messages = []
+    nextPageToken = ''
+    if 'messages' in response:
+      messages.extend(response['messages'])
+    if 'nextPageToken' in response:
+      nextPageToken = response['nextPageToken']
+    return messages,nextPageToken
   except errors.HttpError, error:
     print 'An error occurred: %s' % error
