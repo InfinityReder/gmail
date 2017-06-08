@@ -57,4 +57,8 @@ def findIdeaUrl(list):
             return url,txt
     return None
 
+
+def findIdeaUrlInHtml(html):
+    return findIdeaUrl( regEmail(html) )
+
 # print findIdeaUrl( regEmail(html) )
