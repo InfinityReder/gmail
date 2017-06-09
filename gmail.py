@@ -71,7 +71,7 @@ def getIdeaUrlsFromEmail():
     service = discovery.build('gmail', 'v1', http=http)
 
 
-    lists,nextPageToken = ListMessages(service,user_id = 'me',q='subject:tradingview')
+    lists,nextPageToken = ListMessages(service,user_id = 'me',q='from:noreply@tradingview.com')
     # print (lists)
     mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[0]['id'])
     # print (mes)
@@ -97,6 +97,7 @@ def getIdeaUrlsFromEmail():
             # print >> f, data  
             # 正则替换掉所有非 <a></a>的标签  <[^>|a]+>
             # reg = re.compile('<[^>|a]+>')
+            # print (content)
             url,title = findIdeaUrlInHtml(content)
             urls.append((url,title))
             # print (url,title)
