@@ -48,7 +48,7 @@ def updateIdeas(user_name = '',idea_id = '',title = '',contents = '',comments = 
         Ideas.update(user_name = user_name,title = title,contents = contents, comments = comments, direction = direction,score = score).where(idea_id == idea_id).execute()
 
 def getIdeas(pageNum = 1,pageSize = 20):
-    return Ideas.select().paginate(pageNum,paginate_by = pageSize).execute()
+    return Ideas.select().paginate(pageNum,paginate_by = pageSize).get()
     
 if __name__ == '__main__':
     saveIdeaWithCheck(idea_id = '?',contents = 'hhhhhh')

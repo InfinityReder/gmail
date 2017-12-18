@@ -60,20 +60,8 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def getIdeaUrlsFromEmail():
-    """Shows basic usage of the Gmail API.
-
-    Creates a Gmail API service object and outputs a list of label names
-    of the user's Gmail account.
-    """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
-
-
-    lists,nextPageToken = ListMessages(service,user_id = 'me',q='from:noreply@tradingview.com')
-    # print (lists)
-    mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[0]['id'])
+def extractUrlFromMsg(service,user_id = 'me',msg_id = ''):
+    mes,mes_str = GetMimeMessage(service,user_id = user_id,msg_id = msg_id)
     # print (mes)
     j = 0
     urls = []
@@ -104,8 +92,57 @@ def getIdeaUrlsFromEmail():
         #     contentTxt = re.compile('<[^>|a]+>').sub('',content)
         #     print (reg.sub('',content))
         # #end if  
-
     return urls
+
+def getIdeaUrlsFromEmail(pageToken = ''):
+    """Shows basic usage of the Gmail API.
+
+    Creates a Gmail API service object and outputs a list of label names
+    of the user's Gmail account.
+    """
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+
+    lists,nextPageToken = ListMessages(service,user_id = 'me',q='from:noreply@tradingview.com',pageToken = pageToken,maxResults = 3)
+    # print (lists)
+    urls = []
+    for item in lists:
+        url = extractUrlFromMsg(service,user_id = 'me',msg_id = item['id'])
+        urls += (url)
+    # mes,mes_str = GetMimeMessage(service,user_id = 'me',msg_id = lists[0]['id'])
+    # # print (mes)
+    # j = 0
+    # urls = []
+    # for part in mes.walk():  
+    #     j = j + 1  
+    #     fileName = part.get_filename()  
+    #     contentType = part.get_content_type()  
+    #     mycode=part.get_content_charset();  
+    #     # 保存附件  
+    #     if fileName:
+    #         print ('保存邮件附件……TODO?')
+    #     elif contentType == 'text/html':  #or contentType == 'text/plain'  
+    #         #保存正文  
+    #         data = part.get_payload(decode=True)  
+    #         content=str(data);  
+    #         # if mycode=='gb2312':  
+    #         #     content= mbs_to_utf8(content)  
+    #         #end if      
+    #         # nPos = content.find('降息')  
+    #         # print("nPos is %d"%(nPos))  
+    #         # print >> f, data  
+    #         # 正则替换掉所有非 <a></a>的标签  <[^>|a]+>
+    #         # reg = re.compile('<[^>|a]+>')
+    #         # print (content)
+    #         url,title = findIdeaUrlInHtml(content)
+    #         urls.append((url,title))
+    #         # print (url,title)
+    #     #     contentTxt = re.compile('<[^>|a]+>').sub('',content)
+    #     #     print (reg.sub('',content))
+    #     # #end if  
+    return urls,nextPageToken
 
 # if __name__ == '__main__':
 #     main()

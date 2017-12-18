@@ -19,7 +19,7 @@ def getImg(html):
 
 
 
-# html = getHtml("")
+# html = getHtml("https://www.tradingview.com/chart/XAUUSD/K0wZDCTb-Gold-Long-term-buy-plan/?utm_source=notification_email&utm_medium=email&utm_campaign=notification_follower_idea_update")
 # # print html
 # # print getImg(html)
 

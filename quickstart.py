@@ -93,7 +93,7 @@ def main():
             content=str(data);  
             # if mycode=='gb2312':  
             #     content= mbs_to_utf8(content)  
-            #end if      
+            #end if
             # nPos = content.find('降息')  
             # print("nPos is %d"%(nPos))  
             # print >> f, data  
